@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UXIDONE SYSTEMS | Future-Proof Technologies</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;800&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        :root {
+            --primary: #6366f1;
+            --secondary: #8b5cf6;
+            --bg: #050505;
+            --surface: #0f1115;
+            --text: #ffffff;
+            --text-muted: #888888;
+            --border: rgba(255, 255, 255, 0.08);
+            --ease: cubic-bezier(0.23, 1, 0.32, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            cursor: none;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* --- Scroll Progress --- */
+        #progress {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 2px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            z-index: 2000;
+            width: 0%;
+        }
+
+        /* --- Custom Cursor --- */
+        #cursor {
+            position: fixed;
+            width: 8px;
+            height: 8px;
+            background: #fff;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 9999;
+            transition: transform 0.1s ease-out;
+        }
+
+        #follower {
+            position: fixed;
+            width: 40px;
+            height: 40px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 9998;
+            transition: transform 0.4s var(--ease), background 0.3s ease;
+        }
+
+        /* --- Layout --- */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 4rem;
+        }
+
+        /* --- Navigation --- */
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            padding: 3rem 0; /* Increased initial padding */
+            z-index: 1000;
+            transition: all 0.4s var(--ease);
+        }
+
+        nav.scrolled {
+            padding: 1.5rem 0;
+            background: rgba(5, 5, 5, 0.8);
+            backdrop-filter: saturate(180%) blur(20px);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .nav-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo-img {
+            height: 45px; /* Increased logo size in nav */
+            width: auto;
+            display: block;
+            transition: height 0.4s var(--ease);
+        }
+
+        nav.scrolled .logo-img {
+            height: 32px;
+        }
+
+        .nav-logo-img {
+            filter: brightness(0) invert(1);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 3rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--text-muted);
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            transition: color 0.3s ease;
+        }
+
+        .nav-links a:hover { color: #fff; }
+
+        /* --- Hero --- */
+        .hero {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            position: relative;
+        }
+
+        .hero-tag {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 4px;
+            color: var(--primary);
+            font-weight: 700;
+            margin-bottom: 2rem;
+            display: block;
+        }
+
+        .hero h1 {
+            font-size: clamp(3.5rem, 10vw, 8rem);
+            font-weight: 800;
+            line-height: 0.9;
+            letter-spacing: -4px;
+            margin-bottom: 2.5rem;
+        }
+
+        .hero h1 span {
+            display: block;
+            background: linear-gradient(to right, #fff, var(--text-muted));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            margin-top: 2rem;
+        }
+
+        .hero-desc {
+            max-width: 600px;
+            color: var(--text-muted);
+            font-size: 1.1rem;
+            line-height: 1.6;
+        }
+
+        .hero-desc a {
+            color: #fff;
+            text-decoration: none;
+            border-bottom: 1px solid rgba(255,255,255,0.3);
+            transition: all 0.3s ease;
+        }
+
+        .hero-desc a:hover {
+            color: var(--primary);
+            border-color: var(--primary);
+        }
+
+        /* --- Magnetic Button --- */
+        .mag-btn-wrap {
+            position: relative;
+            display: inline-block;
+        }
+
+        .btn {
+            padding: 1.2rem 2.8rem;
+            background: #fff;
+            color: #000;
+            border-radius: 100px;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transition: transform 0.2s ease-out;
+        }
+
+        /* --- Tech Bento Grid --- */
+        .tech-grid {
+            display: grid;
+            grid-template-columns: repeat(12, 1fr);
+            gap: 1.5rem;
+            padding-bottom: 10rem;
+        }
+
+        .tech-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 32px;
+            padding: 3rem;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            transition: all 0.5s var(--ease);
+        }
+
+        .tech-card:hover { 
+            border-color: rgba(99, 102, 241, 0.4);
+            transform: translateY(-8px);
+            background: rgba(15, 17, 21, 0.6);
+        }
+
+        .card-large { grid-column: span 8; height: 500px; }
+        .card-small { grid-column: span 4; height: 500px; }
+        .card-full { grid-column: span 12; height: 400px; }
+
+        .tech-card .icon-box {
+            width: 50px;
+            height: 50px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 2rem;
+            color: var(--primary);
+        }
+
+        .tech-card h3 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            letter-spacing: -0.5px;
+        }
+
+        .tech-card p {
+            color: var(--text-muted);
+            line-height: 1.6;
+            max-width: 90%;
+        }
+
+        /* --- Visual Assets --- */
+        .visual-bg {
+            position: absolute;
+            right: -10%;
+            bottom: -10%;
+            width: 60%;
+            height: 80%;
+            opacity: 0.2;
+            pointer-events: none;
+        }
+
+        .mesh-gradient {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle, var(--primary), transparent 70%);
+            filter: blur(80px);
+            animation: pulse 8s infinite alternate;
+        }
+
+        @keyframes pulse {
+            from { opacity: 0.1; transform: scale(0.8); }
+            to { opacity: 0.3; transform: scale(1.2); }
+        }
+
+        /* --- Footer --- */
+        footer {
+            padding: 10rem 0 4rem;
+            border-top: 1px solid var(--border);
+        }
+
+        .footer-top {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 6rem;
+        }
+
+        .footer-col h4 {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 2rem;
+            color: var(--primary);
+        }
+
+        .footer-col ul { list-style: none; }
+        .footer-col ul li { margin-bottom: 1rem; }
+        .footer-col ul a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 1.1rem;
+            transition: color 0.3s ease;
+        }
+        .footer-col ul a:hover { color: #fff; }
+
+        /* --- BRAND SHOWCASE (Grand Finale) --- */
+        .brand-showcase {
+            background-color: #ffffff;
+            padding: 20rem 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 12rem;
+            width: 100vw;
+            margin-left: calc(-50vw + 50%);
+            overflow: hidden;
+            position: relative;
+            z-index: 10;
+        }
+
+        .huge-logo-icon {
+            width: clamp(300px, 40vw, 600px); /* Massive increase */
+            height: auto;
+            filter: brightness(0);
+            transition: transform 1.5s var(--ease);
+        }
+
+        .huge-logo-systems {
+            width: clamp(400px, 90vw, 1600px); /* Massive increase */
+            height: auto;
+            filter: brightness(0);
+            transition: transform 1.5s var(--ease);
+        }
+
+        .brand-showcase:hover .huge-logo-icon { transform: scale(1.05) translateY(-20px); }
+
+        /* --- Reveal Animations --- */
+        .reveal {
+            opacity: 0;
+            transform: translateY(40px);
+            transition: 1.2s var(--ease);
+        }
+
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        @media (max-width: 1024px) {
+            .container { padding: 0 2rem; }
+            .card-large, .card-small, .card-full { grid-column: span 12; height: auto; min-height: 400px; }
+            * { cursor: auto !important; }
+            #cursor, #follower { display: none; }
+            .footer-top { flex-direction: column; gap: 4rem; }
+            .brand-showcase { padding: 10rem 0; gap: 6rem; }
+            .logo-img { height: 32px; }
+            nav { padding: 1.5rem 0; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="progress"></div>
+    <div id="cursor"></div>
+    <div id="follower"></div>
+
+    <nav id="navbar">
+        <div class="container nav-content">
+            <a href="#" class="logo">
+                <img src="https://assets-uxidone.github.io/assets/UxidoneSYSTEMS_LOGO_nobackground.png" alt="UXIDONE SYSTEMS" class="logo-img nav-logo-img">
+            </a>
+            <ul class="nav-links">
+                <li><a href="#technologies">Infrastructure</a></li>
+                <li><a href="#lab">The Lab</a></li>
+                <li><a href="#contact">Terminal</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <main class="container">
+        <!-- Hero Section -->
+        <header class="hero">
+            <span class="hero-tag reveal">SYSTEM ARCHITECTURE</span>
+            <h1 class="reveal">
+                <span>The Engine of</span>
+                UXIDONE SYSTEMS.
+            </h1>
+            <div class="hero-footer reveal">
+                <p class="hero-desc">
+                    UXIDONE SYSTEMS is a specialized division of <a href="https://uxidone.github.io/" target="_blank">UXIDONE</a>, 
+                    dedicated to high-performance digital frameworks and autonomous system engineering. 
+                    We redefine how technology interacts with the human experience.
+                </p>
+                <div class="mag-btn-wrap">
+                    <a href="#technologies" class="btn">
+                        Initialize Build <i data-lucide="binary"></i>
+                    </a>
+                </div>
+            </div>
+        </header>
+
+        <!-- Technologies Grid -->
+        <section id="technologies" class="tech-grid">
+            <div class="tech-card card-large reveal">
+                <div class="icon-box"><i data-lucide="cpu"></i></div>
+                <h3>Core Processing</h3>
+                <p>Proprietary logic structures built for 99.99% uptime. Our distributed processing models ensure consistent data flow across complex network topologies.</p>
+                <div class="visual-bg">
+                    <div class="mesh-gradient"></div>
+                </div>
+            </div>
+
+            <div class="tech-card card-small reveal">
+                <div class="icon-box"><i data-lucide="shield-check"></i></div>
+                <h3>Zero-Trust Protocol</h3>
+                <p>Integrated security layers at every hardware level, ensuring data integrity within the UXIDONE ecosystem.</p>
+            </div>
+
+            <div class="tech-card card-small reveal">
+                <div class="icon-box"><i data-lucide="workflow"></i></div>
+                <h3>System Automation</h3>
+                <p>Developing self-optimizing pipelines that reduce overhead and maximize throughput automatically.</p>
+            </div>
+
+            <div class="tech-card card-large reveal">
+                <div class="icon-box"><i data-lucide="globe"></i></div>
+                <h3>Global Infrastructure</h3>
+                <p>Deploying edge nodes globally to ensure ultra-low latency. UXIDONE SYSTEMS powers the connectivity of the modern world.</p>
+                <div class="visual-bg" style="right: 0; bottom: 0;">
+                    <img src="https://assets-uxidone.github.io/assets/Uxidone_logo_without_Uxidone_no_background.png" alt="" style="width: 100%; opacity: 0.1; filter: invert(1);">
+                </div>
+            </div>
+
+            <div class="tech-card card-full reveal">
+                <div class="icon-box"><i data-lucide="activity"></i></div>
+                <h3>Real-Time Analytics</h3>
+                <p>Visualizing millions of data points per second. Our analytics engine translates raw data into actionable intelligence for mission-critical deployments.</p>
+            </div>
+        </section>
+
+        <!-- Footer Terminal -->
+        <section id="contact">
+            <footer>
+                <div class="footer-top">
+                    <div class="footer-col reveal">
+                        <h4>System Hierarchy</h4>
+                        <ul>
+                            <li><a href="#">Security Stack</a></li>
+                            <li><a href="#">Edge Computing</a></li>
+                            <li><a href="#">AI Research</a></li>
+                            <li><a href="#">Network Logs</a></li>
+                        </ul>
+                    </div>
+                    <div class="footer-col reveal">
+                        <h4>Communications</h4>
+                        <ul>
+                            <li><a href="mailto:hq@uxidone.systems">hq@uxidone.systems</a></li>
+                            <li><a href="#">Access Terminal</a></li>
+                        </ul>
+                    </div>
+                    <div class="footer-col reveal">
+                        <h4>External Links</h4>
+                        <ul>
+                            <li><a href="https://uxidone.github.io/">UXIDONE Main</a></li>
+                            <li><a href="#">GitHub Repository</a></li>
+                            <li><a href="#">LinkedIn</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="footer-bottom reveal">
+                    <div>UXIDONE SYSTEMS &reg; 2026 // ALL SYSTEMS OPERATIONAL</div>
+                    <div style="color: var(--primary);">BUILD_V6_STABLE</div>
+                </div>
+            </footer>
+        </section>
+    </main>
+
+    <!-- THE FINALE: HUGE BRAND SHOWCASE -->
+    <section class="brand-showcase">
+        <img src="https://assets-uxidone.github.io/assets/Uxidone_logo_without_Uxidone_no_background.png" alt="UXIDONE Icon Asset" class="huge-logo-icon reveal">
+        <img src="https://assets-uxidone.github.io/assets/UxidoneSYSTEMS_LOGO_nobackground.png" alt="UXIDONE SYSTEMS Logo Asset" class="huge-logo-systems reveal">
+    </section>
+
+    <script>
+        lucide.createIcons();
+
+        const cursor = document.getElementById('cursor');
+        const follower = document.getElementById('follower');
+        const progress = document.getElementById('progress');
+        const navbar = document.getElementById('navbar');
+
+        document.addEventListener('mousemove', (e) => {
+            const { clientX: x, clientY: y } = e;
+            cursor.style.transform = `translate(${x}px, ${y}px)`;
+            follower.animate({
+                transform: `translate(${x - 20}px, ${y - 20}px)`
+            }, { duration: 500, fill: "forwards" });
+        });
+
+        // Hover states
+        document.querySelectorAll('a, .tech-card, .btn').forEach(el => {
+            el.addEventListener('mouseenter', () => {
+                follower.style.transform += ' scale(2.5)';
+                follower.style.background = 'rgba(99, 102, 241, 0.1)';
+                follower.style.borderColor = 'var(--primary)';
+                cursor.style.transform += ' scale(0.5)';
+            });
+            el.addEventListener('mouseleave', () => {
+                follower.style.transform = follower.style.transform.replace(' scale(2.5)', '');
+                follower.style.background = 'transparent';
+                follower.style.borderColor = 'rgba(255,255,255,0.2)';
+                cursor.style.transform = cursor.style.transform.replace(' scale(0.5)', '');
+            });
+        });
+
+        window.addEventListener('scroll', () => {
+            const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+            const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            const scrolled = (winScroll / height) * 100;
+            progress.style.width = scrolled + "%";
+
+            if (window.scrollY > 80) navbar.classList.add('scrolled');
+            else navbar.classList.remove('scrolled');
+
+            document.querySelectorAll('.reveal').forEach(el => {
+                const rect = el.getBoundingClientRect();
+                if (rect.top < window.innerHeight - 50) el.classList.add('active');
+            });
+        });
+
+        // Magnetic Effect
+        document.querySelectorAll('.mag-btn-wrap').forEach(wrap => {
+            wrap.addEventListener('mousemove', (e) => {
+                const btn = wrap.querySelector('.btn');
+                const rect = wrap.getBoundingClientRect();
+                const x = e.clientX - rect.left - rect.width / 2;
+                const y = e.clientY - rect.top - rect.height / 2;
+                btn.style.transform = `translate(${x * 0.4}px, ${y * 0.4}px)`;
+            });
+            wrap.addEventListener('mouseleave', (e) => {
+                const btn = wrap.querySelector('.btn');
+                btn.style.transform = `translate(0, 0)`;
+            });
+        });
+
+        // Initial trigger
+        window.dispatchEvent(new Event('scroll'));
+    </script>
+</body>
+</html>
